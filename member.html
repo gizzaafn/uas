@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daftar Member UKM</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+    }
+    #topBar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: #2c3e50;
+      color: #fff;
+    }
+    h2 {
+      margin: 0;
+    }
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #3498db;
+      color: #fff;
+    }
+    tr:hover {
+      background: #f1f1f1;
+    }
+    #backBtn {
+      margin: 20px 30px;
+      padding: 10px 20px;
+      border: none;
+      background: #7f8c8d;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #logoutBtn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== Bar Atas dengan Logout ===== -->
+  <div id="topBar">
+    <h2 id="judulHalaman">Daftar Member UKM</h2>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <!-- ===== Tombol Kembali ===== -->
+  <button id="backBtn">⬅ Kembali</button>
+
+  <!-- ===== Tabel Daftar Member ===== -->
+  <table>
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Kelas</th>
+        <th>Semester</th>
+        <th>Prodi</th>
+        <th>UKM</th>
+      </tr>
+    </thead>
+    <tbody id="memberTable"></tbody>
+  </table>
+
+  <!-- ===== Script Supabase dan Logika ===== -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // Inisialisasi Supabase
+    const supabase = createClient(
+      'https://fcsnwmzrpwsabsqnscwj.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjc253bXpycHdzYWJzcW5zY3dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1MTUwNDUsImV4cCI6MjA2MjA5MTA0NX0.QKBmiZGCbP79v75XE4VTG0TDmGZV-iC2vE0gOzLMeH0'
+    );
+
+    // Ambil elemen DOM
+    const logoutBtn = document.getElementById('logoutBtn');
+    const backBtn = document.getElementById('backBtn');
+    const memberTable = document.getElementById('memberTable');
+
+    // Ambil parameter UKM dari URL
+    const ukmNama = new URLSearchParams(window.location.search).get('ukm');
+    document.getElementById("judulHalaman").textContent = `Daftar Member UKM: ${ukmNama}`;
+
+    // Logout dan redirect ke index
+    logoutBtn.onclick = async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'index.html';
+    };
+
+    // Kembali ke dashboard admin
+    backBtn.onclick = () => {
+      window.location.href = 'admin.html';
+    };
+
+    // Ambil dan tampilkan member yang sudah diterima
+    async function loadMembers() {
+      const { data, error } = await supabase
+        .from('pendaftaran')
+        .select('*')
+        .eq('status', true)
+        .eq('nama_ukm', ukmNama)
+        .order('nama');
+
+      if (error) return alert('Gagal load member: ' + error.message);
+
+      memberTable.innerHTML = data.map(p => `
+        <tr>
+          <td>${p.nama}</td>
+          <td>${p.kelas}</td>
+          <td>${p.semester}</td>
+          <td>${p.prodi}</td>
+          <td>${p.nama_ukm}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Jalankan saat halaman dibuka
+    loadMembers();
+  </script>
+</body>
+</html>
