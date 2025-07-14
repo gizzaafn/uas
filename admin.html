@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Admin Panel UKM Universitas IPWIJA" />
     <title>Admin Panel UKM</title>
     <style>
       body {
@@ -170,6 +171,23 @@
         }
       }
 
+      @media (max-width: 600px) {
+        .ukm-card {
+          width: 120px;
+          height: 120px;
+          padding: 8px;
+        }
+
+        .ukm-card h3 {
+          font-size: 0.9rem;
+        }
+
+        .ukm-card button {
+          font-size: 0.75rem;
+          padding: 5px 10px;
+        }
+      }
+
       .ukm-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
@@ -287,17 +305,14 @@
           </select>
           <button type="submit" class="btn-export">Export</button>
         </form>
-        <!-- ===== Tombol Logout ===== -->
         <button id="logoutBtn">Logout</button>
       </div>
     </div>
 
-    <!-- ===== Tombol Kembali ===== -->
     <div class="container">
       <div id="ukmButtons"></div>
     </div>
 
-    <!-- ===== Modal Aksi UKM ===== -->
     <div id="modal" class="modal">
       <div class="modal-content">
         <h3 id="modalTitle">Data UKM</h3>
@@ -311,7 +326,6 @@
       </div>
     </div>
 
-    <!-- ===== Form Tambah/Edit UKM ===== -->
     <div id="formPopup" class="form-popup">
       <h3 id="formTitle">Form UKM</h3>
       <form id="ukmForm">
@@ -331,7 +345,6 @@
       </form>
     </div>
 
-    <!-- ===== Logika Supabase dan CRUD ===== -->
     <script type="module">
       import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
       import * as XLSX from "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm";
@@ -357,7 +370,6 @@
 
       let selectedUKM = "";
 
-      // Logout admin
       logoutBtn.onclick = async () => {
         await supabase.auth.signOut();
         window.location.href = "index.html";
@@ -398,7 +410,6 @@
         XLSX.writeFile(workbook, `${fileName}.xlsx`);
       }
 
-      // Tombol Tambah UKM
       addUkmBtn.onclick = () => {
         document.getElementById("formTitle").textContent = "Tambah UKM";
         ukmForm.reset();
@@ -406,7 +417,6 @@
         formPopup.style.display = "block";
       };
 
-      // Simpan data UKM (insert / update)
       ukmForm.onsubmit = async (e) => {
         e.preventDefault();
         const data = {
@@ -431,7 +441,6 @@
         loadUKMButtons();
       };
 
-      // Hanya admin boleh masuk halaman ini
       async function checkAdmin() {
         const {
           data: { user },
@@ -444,7 +453,6 @@
         loadUKMButtons();
       }
 
-      // Tampilkan semua UKM
       async function loadUKMButtons() {
         const { data, error } = await supabase
           .from("ukm")
@@ -463,14 +471,12 @@
           .join("");
       }
 
-      // Tampilkan Modal UKM
       window.openModal = (ukmNama) => {
         selectedUKM = ukmNama;
         modalTitle.textContent = `Data UKM: ${ukmNama}`;
         modal.style.display = "flex";
       };
 
-      // Edit UKM
       editUkmBtn.onclick = async () => {
         const { data, error } = await supabase
           .from("ukm")
@@ -517,7 +523,6 @@
 
       closeModalBtn.onclick = () => (modal.style.display = "none");
 
-      // Saat halaman dibuka, cek admin
       window.addEventListener("DOMContentLoaded", checkAdmin);
     </script>
   </body>
