@@ -243,7 +243,7 @@
     <h3>Form Pendaftaran UKM</h3>
     <input type="text" id="namaInput" placeholder="Nama">
     <input type="text" id="kelasInput" placeholder="Kelas">
-    <input type="number" id="semesterInput" placeholder="Semester (1-8)">
+    <input type="number" id="semesterInput" placeholder="Semester">
     <input type="text" id="prodiInput" placeholder="Program Studi">
     <input type="text" id="penyakitInput" placeholder="Riwayat Penyakit (jika ada)">
     <input type="email" id="emailInput" placeholder="Email Mahasiswa">
@@ -353,7 +353,7 @@
     if (!prodiValid.includes(prodi.toLowerCase()))
       return alert('Prodi tidak valid. Pilih: ' + prodiValid.join(', '));
 
-    const penyakitTerlarang = ['asma','jantung','cedera','kanker','tuli', 'buta'];
+    const penyakitTerlarang = ['asma','jantung','cedera','kanker','tuli', 'buta', 'lambung', 'patah tulang'];
     const isFisik = selectedUKM.kategori?.toLowerCase() === 'fisik';
     if (isFisik && penyakitTerlarang.includes(penyakit))
       return alert('Karena penyakit dan UKM fisik, Anda tidak dapat mendaftar.');
